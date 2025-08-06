@@ -169,6 +169,14 @@ body {
     text-align: center;
 }
 
+.option-info {
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
 .parameters-list {
     display: flex;
     flex-direction: column;

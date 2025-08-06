@@ -58,6 +58,14 @@
                                 <option value="put">Put</option>
                             </select>
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="option_style">Estilo da Opção</label>
+                            <select id="option_style" name="option_style" required>
+                                <option value="european">Europeia</option>
+                                <option value="american">Americana</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <button type="submit" class="calculate-btn">
@@ -74,6 +82,7 @@
                     <div class="result-card">
                         <h3>Preço da Opção</h3>
                         <div class="price-display" id="optionPrice">-</div>
+                        <div class="option-info" id="optionInfo">-</div>
                     </div>
                     
                     <div class="result-card">

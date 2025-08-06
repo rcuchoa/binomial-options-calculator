@@ -13,6 +13,7 @@ const closeModal = document.querySelector('.close');
 
 // Elementos de resultado
 const optionPrice = document.getElementById('optionPrice');
+const optionInfo = document.getElementById('optionInfo');
 const uParam = document.getElementById('uParam');
 const dParam = document.getElementById('dParam');
 const pParam = document.getElementById('pParam');
@@ -50,7 +51,8 @@ async function handleFormSubmit(event) {
         r: parseFloat(formData.get('r')),
         sigma: parseFloat(formData.get('sigma')),
         n_steps: parseInt(formData.get('n_steps')),
-        option_type: formData.get('option_type')
+        option_type: formData.get('option_type'),
+        option_style: formData.get('option_style')
     };
     
     // Validação básica
@@ -109,6 +111,12 @@ function validateInputs(data) {
 function displayResults(result) {
     // Atualizar preço da opção
     optionPrice.textContent = `R$ ${result.option_price.toFixed(4)}`;
+    
+    // Atualizar informações da opção
+    const formData = new FormData(optionForm);
+    const optionType = formData.get('option_type') === 'call' ? 'Call' : 'Put';
+    const optionStyle = formData.get('option_style') === 'american' ? 'Americana' : 'Europeia';
+    optionInfo.textContent = `${optionType} ${optionStyle}`;
     
     // Atualizar parâmetros da árvore
     uParam.textContent = result.parameters.u.toFixed(6);

@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 class BinomialOptionPricer:
-    def __init__(self, S0, K, T, r, sigma, n_steps, option_type='call'):
+    def __init__(self, S0, K, T, r, sigma, n_steps, option_type='call', option_style='european'):
         """
         Inicializa o calculador de opções binomiais
         
@@ -19,6 +19,7 @@ class BinomialOptionPricer:
             sigma: Volatilidade
             n_steps: Número de passos na árvore
             option_type: Tipo de opção ('call' ou 'put')
+            option_style: Estilo da opção ('european' ou 'american')
         """
         self.S0 = S0
         self.K = K
@@ -27,6 +28,7 @@ class BinomialOptionPricer:
         self.sigma = sigma
         self.n_steps = n_steps
         self.option_type = option_type
+        self.option_style = option_style
         
         # Calcula parâmetros da árvore
         self.dt = T / n_steps
@@ -60,6 +62,16 @@ class BinomialOptionPricer:
                                (1 - self.p) * option_values[i + 1, j + 1])
                 # Valor descontado
                 option_values[i, j] = math.exp(-self.r * self.dt) * expected_value
+                
+                # Para opções americanas, verifica se é melhor exercer antecipadamente
+                if self.option_style == 'american':
+                    if self.option_type == 'call':
+                        intrinsic_value = max(stock_prices[i, j] - self.K, 0)
+                    else:  # put
+                        intrinsic_value = max(self.K - stock_prices[i, j], 0)
+                    
+                    # O valor da opção é o máximo entre o valor intrínseco e o valor esperado
+                    option_values[i, j] = max(intrinsic_value, option_values[i, j])
         
         return {
             'option_price': option_values[0, 0],
@@ -90,6 +102,7 @@ def calculate_option():
         sigma = float(data['sigma'])
         n_steps = int(data['n_steps'])
         option_type = data['option_type']
+        option_style = data.get('option_style', 'european')  # Padrão é europeia
         
         # Validações básicas
         if S0 <= 0 or K <= 0 or T <= 0 or n_steps <= 0:
@@ -101,8 +114,11 @@ def calculate_option():
         if option_type not in ['call', 'put']:
             return jsonify({'error': 'Tipo de opção deve ser "call" ou "put"'}), 400
         
+        if option_style not in ['european', 'american']:
+            return jsonify({'error': 'Estilo de opção deve ser "european" ou "american"'}), 400
+        
         # Calcula preço da opção
-        pricer = BinomialOptionPricer(S0, K, T, r, sigma, n_steps, option_type)
+        pricer = BinomialOptionPricer(S0, K, T, r, sigma, n_steps, option_type, option_style)
         result = pricer.calculate_option_price()
         
         return jsonify(result)

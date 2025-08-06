@@ -5,6 +5,7 @@ Uma aplicação web completa para cálculo de preços de opções usando o model
 ## Características
 
 - **Cálculo de Preços**: Implementa o modelo de árvore binomial para opções call e put
+- **Suporte a Opções Americanas e Europeias**: Calcula preços para ambos os estilos de opção
 - **Interface Moderna**: Design responsivo e intuitivo
 - **Visualização da Árvore**: Representação gráfica da árvore binomial
 - **Validação de Dados**: Validação em tempo real dos parâmetros de entrada
@@ -19,6 +20,7 @@ Uma aplicação web completa para cálculo de preços de opções usando o model
 - **σ (Volatilidade)**: Volatilidade anual do ativo
 - **N (Número de Passos)**: Número de passos na árvore binomial (1-50)
 - **Tipo de Opção**: Call ou Put
+- **Estilo da Opção**: Europeia ou Americana
 
 ## Instalação
 
@@ -60,6 +62,7 @@ Preencha os campos do formulário com os parâmetros da sua opção:
 - **Volatilidade (σ)**: Ex: 0.2 (20%)
 - **Número de Passos**: Ex: 10
 - **Tipo de Opção**: Call ou Put
+- **Estilo da Opção**: Europeia ou Americana
 
 ### 2. Cálculo
 
@@ -70,6 +73,7 @@ Clique no botão "Calcular Preço da Opção" para executar o cálculo.
 A aplicação exibirá:
 
 - **Preço da Opção**: O valor calculado da opção
+- **Tipo e Estilo da Opção**: Call/Put Europeia/Americana
 - **Parâmetros da Árvore**: 
   - Fator de alta (u)
   - Fator de baixa (d)
@@ -103,6 +107,13 @@ O modelo assume que o preço do ativo pode subir ou descer em cada passo:
    ```
    V = e^(-rΔt) * [p * V_up + (1-p) * V_down]
    ```
+
+### Diferenças entre Opções Americanas e Europeias
+
+- **Opções Europeias**: Só podem ser exercidas no vencimento
+- **Opções Americanas**: Podem ser exercidas a qualquer momento até o vencimento
+- **Calls Americanas**: Geralmente não são exercidas antecipadamente (sem dividendos)
+- **Puts Americanas**: Podem ser exercidas antecipadamente quando é ótimo fazê-lo
 
 ## Estrutura do Projeto
 
@@ -138,13 +149,14 @@ binomial-options-calculator/
 
 ## Exemplos de Uso
 
-### Opção Call At-the-Money
+### Opção Call At-the-Money (Europeia)
 - S₀ = 100, K = 100, T = 1, r = 0.05, σ = 0.2, N = 10
-- Resultado esperado: ~10.45
+- Resultado esperado: ~10.25
 
-### Opção Put Out-of-the-Money
-- S₀ = 100, K = 90, T = 0.5, r = 0.03, σ = 0.15, N = 8
-- Resultado esperado: ~2.15
+### Opção Put In-the-Money (Americana vs Europeia)
+- S₀ = 90, K = 100, T = 1, r = 0.05, σ = 0.2, N = 10
+- Put Europeia: ~10.20
+- Put Americana: ~11.44 (mais valiosa devido ao exercício antecipado)
 
 ## Limitações
 
