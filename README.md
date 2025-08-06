@@ -1,4 +1,4 @@
-## Calculadora de Opções Binomiais
+# Calculadora de Opções Binomiais
 
 Uma aplicação web completa para cálculo de preços de opções usando o modelo de árvore binomial. A aplicação oferece uma interface moderna e intuitiva para entrada de parâmetros e visualização dos resultados.
 
