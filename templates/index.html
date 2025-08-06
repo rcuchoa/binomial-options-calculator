@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Opções Binomiais</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-chart-line"></i> Calculadora de Opções Binomiais</h1>
+            <p>Calcule preços de opções usando o modelo de árvore binomial</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Formulário de entrada -->
+            <div class="input-section">
+                <h2><i class="fas fa-cog"></i> Parâmetros da Opção</h2>
+                <form id="optionForm" class="option-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="S0">Preço Atual do Ativo (S₀)</label>
+                            <input type="number" id="S0" name="S0" value="100" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="K">Preço de Exercício (K)</label>
+                            <input type="number" id="K" name="K" value="100" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="T">Tempo até Vencimento (anos)</label>
+                            <input type="number" id="T" name="T" value="1" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="r">Taxa de Juros Livre de Risco (r)</label>
+                            <input type="number" id="r" name="r" value="0.05" step="0.001" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sigma">Volatilidade (σ)</label>
+                            <input type="number" id="sigma" name="sigma" value="0.2" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="n_steps">Número de Passos</label>
+                            <input type="number" id="n_steps" name="n_steps" value="10" min="1" max="50" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="option_type">Tipo de Opção</label>
+                            <select id="option_type" name="option_type" required>
+                                <option value="call">Call</option>
+                                <option value="put">Put</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn">
+                        <i class="fas fa-calculator"></i> Calcular Preço da Opção
+                    </button>
+                </form>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2><i class="fas fa-chart-bar"></i> Resultados</h2>
+                
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>Preço da Opção</h3>
+                        <div class="price-display" id="optionPrice">-</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>Parâmetros da Árvore</h3>
+                        <div class="parameters-list" id="treeParameters">
+                            <div class="param-item">
+                                <span>Fator de alta (u):</span>
+                                <span id="uParam">-</span>
+                            </div>
+                            <div class="param-item">
+                                <span>Fator de baixa (d):</span>
+                                <span id="dParam">-</span>
+                            </div>
+                            <div class="param-item">
+                                <span>Probabilidade neutra (p):</span>
+                                <span id="pParam">-</span>
+                            </div>
+                            <div class="param-item">
+                                <span>Intervalo de tempo (Δt):</span>
+                                <span id="dtParam">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualização da Árvore -->
+            <div class="tree-section" id="treeSection" style="display: none;">
+                <h2><i class="fas fa-sitemap"></i> Árvore Binomial</h2>
+                <div class="tree-controls">
+                    <button id="showStockPrices" class="tree-btn active">Preços do Ativo</button>
+                    <button id="showOptionValues" class="tree-btn">Valores da Opção</button>
+                </div>
+                <div class="tree-container">
+                    <canvas id="treeCanvas" width="1200" height="600"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Calculando...</p>
+        </div>
+
+        <!-- Error Modal -->
+        <div id="errorModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Erro</h3>
+                <p id="errorMessage"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
