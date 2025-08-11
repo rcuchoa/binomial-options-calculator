@@ -142,24 +142,28 @@ function drawTree(data) {
     
     const n_steps = data.stock_prices.length - 1;
     const nodeRadius = 25;
-    const levelHeight = 80;
-    const startX = canvas.width / 2;
-    const startY = 50;
+    const levelWidth = 120; // Espaço horizontal entre níveis
+    const startX = 80;
+    const startY = canvas.height / 2;
     
     // Configurações de estilo
     ctx.font = '12px Inter';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
+    // Calcular altura total necessária para o maior nível
+    const maxNodes = n_steps + 1;
+    const totalHeight = (maxNodes - 1) * 80;
+    
     // Desenhar nós e conexões
     for (let i = 0; i <= n_steps; i++) {
-        const y = startY + i * levelHeight;
+        const x = startX + i * levelWidth;
         const nodesInLevel = i + 1;
-        const totalWidth = (nodesInLevel - 1) * 120;
-        const startXLevel = startX - totalWidth / 2;
+        const levelHeight = (canvas.height - 100) / (nodesInLevel - 1 || 1);
+        const startYLevel = (canvas.height - (nodesInLevel - 1) * levelHeight) / 2;
         
         for (let j = 0; j <= i; j++) {
-            const x = startXLevel + j * 120;
+            const y = startYLevel + j * levelHeight;
             
             // Desenhar conexões (exceto para o primeiro nível)
             if (i > 0) {
@@ -168,47 +172,47 @@ function drawTree(data) {
                 
                 // Conexão com nó pai superior
                 if (j < i) {
-                    const parentX = startXLevel - 120 + j * 120;
-                    const parentY = y - levelHeight;
+                    const parentX = startX + (i - 1) * levelWidth;
+                    const parentNodes = i;
+                    const parentLevelHeight = (canvas.height - 100) / (parentNodes - 1 || 1);
+                    const parentStartY = (canvas.height - (parentNodes - 1) * parentLevelHeight) / 2;
+                    const parentY = parentStartY + j * parentLevelHeight;
                     ctx.beginPath();
-                    ctx.moveTo(x, y - nodeRadius);
-                    ctx.lineTo(parentX, parentY + nodeRadius);
+                    ctx.moveTo(x - nodeRadius, y);
+                    ctx.lineTo(parentX + nodeRadius, parentY);
                     ctx.stroke();
                 }
-                
                 // Conexão com nó pai inferior
                 if (j > 0) {
-                    const parentX = startXLevel - 120 + (j - 1) * 120;
-                    const parentY = y - levelHeight;
+                    const parentX = startX + (i - 1) * levelWidth;
+                    const parentNodes = i;
+                    const parentLevelHeight = (canvas.height - 100) / (parentNodes - 1 || 1);
+                    const parentStartY = (canvas.height - (parentNodes - 1) * parentLevelHeight) / 2;
+                    const parentY = parentStartY + (j - 1) * parentLevelHeight;
                     ctx.beginPath();
-                    ctx.moveTo(x, y - nodeRadius);
-                    ctx.lineTo(parentX, parentY + nodeRadius);
+                    ctx.moveTo(x - nodeRadius, y);
+                    ctx.lineTo(parentX + nodeRadius, parentY);
                     ctx.stroke();
                 }
             }
-            
             // Desenhar nó
             ctx.fillStyle = '#667eea';
             ctx.beginPath();
             ctx.arc(x, y, nodeRadius, 0, 2 * Math.PI);
             ctx.fill();
-            
             // Adicionar borda
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 3;
             ctx.stroke();
-            
             // Adicionar texto
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 10px Inter';
-            
             let value;
             if (currentTreeType === 'stock') {
                 value = data.stock_prices[i][j].toFixed(2);
             } else {
                 value = data.option_values[i][j].toFixed(4);
             }
-            
             // Quebrar texto se necessário
             if (value.length > 8) {
                 const parts = value.split('.');
@@ -219,7 +223,6 @@ function drawTree(data) {
             }
         }
     }
-    
     // Adicionar legenda
     ctx.fillStyle = '#2c3e50';
     ctx.font = 'bold 14px Inter';
